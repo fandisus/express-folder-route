@@ -1,4 +1,4 @@
-import express, {Request, Response, NextFunction}  from 'express';
+import {Request, Response, NextFunction, Router}  from 'express';
 
 import fs from 'fs';
 import pathlib from 'path';
@@ -19,8 +19,8 @@ async function getFilePath(folderPath: string, req:Request):Promise<string | nul
   }
 }
 
-let folderRoute = function(folderPath: string, viewFolder: string) {
-  var router = express.Router();
+let folderRoute = function(folderPath: string, viewFolder: string): Router {
+  var router = Router();
   router.get('*', async function(req:Request, res:Response, next:NextFunction) {
     req.app.set('views', viewFolder);
     //req.app, baseurl, body, cookies, hostname, ip, params, path, protocol, query, route, secure, subdomains
