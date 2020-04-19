@@ -4,6 +4,10 @@
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:fandisus/express-folder-route.git"
+  },
   "scripts": {
     "build": "tsc"
   },
