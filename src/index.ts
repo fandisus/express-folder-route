@@ -6,12 +6,17 @@ import pathlib from 'path';
 async function getFilePath(folderPath: string, req:Request):Promise<string | null> { //dalam format '/path/name'. pug dan js tambahin dewek.
   if (req.path === '/') return '/index';
   var result = req.path;
+  if (result.slice(-1) === '/') result = result.slice(0,-1);
   let pathParams:string[] = [];
   while (true) {
-    if (fs.existsSync(`${folderPath}${result}.js`)) {
-      
+    let thePath = `${folderPath}${result}`;
+    if (fs.existsSync(`${thePath}.js`)) {
       req.pathParams = pathParams; //Only if found, put pathParams to request 
       return result;
+    }
+    if (fs.existsSync(`${thePath}/index.js`)) {
+      req.pathParams = pathParams;
+      return `${result}/index`;
     }
     pathParams.unshift(pathlib.basename(result));
     result = pathlib.dirname(result);
