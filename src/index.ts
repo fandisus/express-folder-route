@@ -14,10 +14,13 @@ async function getFilePath(folderPath: string, req:Request):Promise<string | nul
       req.pathParams = pathParams; //Only if found, put pathParams to request 
       return result;
     }
-    if (fs.existsSync(`${thePath}/index.js`)) {
-      req.pathParams = pathParams;
-      return `${result}/index`;
-    }
+    // Cancel to include subfolder index.js into folder route.
+    // Since it can cause confusion with files.
+    // Use app.use('/folder', folderRoute) to include /folder/index.js
+    // if (fs.existsSync(`${thePath}/index.js`)) {
+    //   req.pathParams = pathParams;
+    //   return `${result}/index`;
+    // }
     pathParams.unshift(pathlib.basename(result));
     result = pathlib.dirname(result);
     if (result === '/') return null;
