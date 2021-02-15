@@ -27,7 +27,8 @@ async function getFilePath(folderPath: string, req:Request):Promise<string | nul
   }
 }
 
-let folderRoute = function(folderPath: string, viewFolder: string): Router {
+let folderRoute = function(folderPath: string, viewFolder?: string): Router {
+  if (viewFolder === undefined) viewFolder = folderPath;
   var router = Router();
   router.get('*', async function(req:Request, res:Response, next:NextFunction) {
     req.app.set('views', viewFolder);
