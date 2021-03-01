@@ -49,11 +49,11 @@ let folderRoute = function(folderPath: string, viewFolder?: string): Router {
     if (filepath === null) { next(); return; }
     try {
       var obj:any = await require(`${folderPath}${filepath}.js`).post(req,res);
-      if (!obj.handled) res.send(obj);  
+      if (!obj.handled) res.json(obj);  
     } catch (err) {
       var error: any = <Error>err;
       var errStack = error.stack.replace(/\n/g, '<br />');
-      res.send({result:'error', message:error.message, data: errStack});
+      res.json({result:'error', message:error.message, data: errStack});
     }
   });
   return router;
