@@ -27,7 +27,12 @@ async function getFilePath(folderPath: string, req:Request):Promise<string | nul
   }
 }
 
-let folderRoute = function(folderPath: string, viewFolder?: string): Router {
+export class RouteHandler {
+  static after:(req:Request, res:Response) => void;
+  static before:(req:Request, res:Response) => void;
+}
+
+const folderRoute = function(folderPath: string, viewFolder?: string): Router {
   if (viewFolder === undefined) viewFolder = folderPath;
   var router = Router();
   router.get('*', async function(req:Request, res:Response, next:NextFunction) {
@@ -36,8 +41,10 @@ let folderRoute = function(folderPath: string, viewFolder?: string): Router {
     var filepath = await getFilePath(folderPath, req);
     if (filepath === null) { next(); return; }
     try {
+      if (RouteHandler.before) RouteHandler.before(req, res);
       var obj:any = await require(`${folderPath}${filepath}.js`).get(req,res);
       if (!res.headersSent) res.render(filepath.substring(1), obj);
+      if (RouteHandler.after) RouteHandler.after(req, res);
     } catch (err) {
       var error: any = err;
       var errStack = error.stack.replace(/\n/g, '<br />');
@@ -48,8 +55,10 @@ let folderRoute = function(folderPath: string, viewFolder?: string): Router {
     var filepath = await getFilePath(folderPath, req);
     if (filepath === null) { next(); return; }
     try {
+      if (RouteHandler.before) RouteHandler.before(req, res);
       var obj:any = await require(`${folderPath}${filepath}.js`).post(req,res);
-      if (!obj.handled) res.json(obj);  
+      if (!obj.handled && !res.headersSent) res.json(obj);
+      if (RouteHandler.after) RouteHandler.after(req, res);
     } catch (err) {
       var error: any = <Error>err;
       var errStack = error.stack.replace(/\n/g, '<br />');
